@@ -1,0 +1,79 @@
+Requirement Specification: User Signup
+
+Title: User Registration
+
+Purpose:
+Allow new users to create an account so that they can log in and access the application.
+
+Functional Requirements:
+
+1. Email Input
+The signup screen must provide an input field for the user to enter their email.
+The system must validate that the email format is correct.
+The field is required; if left empty, display: "Email is required".
+
+2. Password Input
+The signup screen must provide a password input field.
+Password must be 8–32 characters and include:
+- At least 1 uppercase letter
+- At least 1 lowercase letter
+- At least 1 number
+- At least 1 special character from !@#$%^&*
+Password input should mask the characters.
+If left empty, display: "Password is required".
+Below the password field, display a real-time indicator line showing which of the 4 conditions are met as the user types.
+Indicators if conditions not met:
+[ ] Uppercase letter
+[ ] Lowercase letter
+[ ] Number
+[ ] Special character
+Indicators if conditions met:
+[x] Uppercase letter
+[x] Lowercase letter
+[x] Number
+[x] Special character
+
+
+3. Confirm Password Input
+The signup screen must provide a confirm password field.
+The confirm password must match the password field.
+If passwords do not match, display: "Passwords do not match".
+This field is required; if left empty, display: "Confirm Password is required".
+
+4. Sign Up Button
+The signup screen must provide a button labeled "Sign Up".
+The button must be disabled until all required fields are filled and valid.
+Clicking the button submits the registration request.
+
+5. Email Uniqueness
+If the email is already registered, display: "Email is already registered".
+
+6. Navigation to Login Page
+Provide a link with the text: "Already have an account? Sign in here."
+Clicking the link navigates the user to the login page.
+
+
+Expected Behavior / Messages:
+
+Condition: Invalid email format
+Expected Message: "Please enter a valid email address"
+
+Condition: Password length does not meet rules
+Expected Message: "Password must be 8-32 characters long"
+
+Condition: Passwords do not match
+Expected Message: "Passwords do not match"
+
+Condition: Email already registered
+Expected Message: "Email is already registered"
+
+Condition: Empty email field
+Expected Message: "Email is required"
+
+Condition: Empty password field
+Expected Message: "Password is required"
+
+Condition: Empty confirm password field
+Expected Message: "Confirm Password is required"
+
+

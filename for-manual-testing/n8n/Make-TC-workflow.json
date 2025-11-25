@@ -1,0 +1,299 @@
+{
+  "name": "Make-TC-workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -96
+      ],
+      "id": "e1a9a06b-9b09-4202-adc6-a5ff553677e3",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.openai.com/v1/assistants/{{ $json.id }}/responses",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"OpenAI-Beta\": \"assistants=v2\",\n  \"Content-Type\": \"application/json\"\n}\n",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"input\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"Xin chào, bạn có thể giới thiệu về bản thân không?\"\n        }\n      ]\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        288,
+        32
+      ],
+      "id": "119bf1f1-e4d3-4ae9-82cb-d170683441a4",
+      "name": "Make TC",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "BHnkkkb96Vl3pWX4",
+          "name": "OPENAI KEY"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.openai.com/v1/assistants",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"OpenAI-Beta\": \"assistants=v2\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        112,
+        208
+      ],
+      "id": "9db3057d-6827-4ebe-a2c4-0b4e5ff831c2",
+      "name": "Get Assistants",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "BHnkkkb96Vl3pWX4",
+          "name": "OPENAI KEY"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are a professional QA engineer specialized in functional testing. You generate clear, structured, and actionable functional test cases using the following techniques: Equivalence Partitioning, Boundary Value Analysis, One-Wise, and Pairwise testing. You cover positive, negative, normal, and edge scenarios with unique IDs.\nGenerate test cases for below User Story:\n{{ $json.Description }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        -416
+      ],
+      "id": "1643abd6-d87d-404c-a197-4bcfe9de0115",
+      "name": "Direct ChatGPT",
+      "credentials": {
+        "openAiApi": {
+          "id": "1xr2OfkbWM3CzQ3v",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.0-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.0-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a professional QA engineer specialized in functional testing. You generate clear, structured, and actionable functional test cases using the following techniques: Equivalence Partitioning, Boundary Value Analysis, One-Wise, and Pairwise testing. You cover positive, negative, normal, and edge scenarios with unique IDs.\nGenerate test cases for below User Story:\n {{ $json.Description }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -192
+      ],
+      "id": "55f418b6-3269-4582-bd95-567504739f42",
+      "name": "Direct Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "MOnElTPdAIVbdjjO",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "issueKey": "SCRUM-1",
+        "simplifyOutput": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -96
+      ],
+      "id": "3abeca69-2cad-4687-a13f-26763bf17c1a",
+      "name": "Get Jira US",
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "DGk25HCMoNq8yxja",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const texts = $input.first().json.candidates[0].content.parts[0].text\n\nreturn JSON.parse(texts)"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        -192
+      ],
+      "id": "1c67f636-6281-4cfd-83f5-9bea4a6e176b",
+      "name": "Process data"
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        368,
+        -192
+      ],
+      "id": "b063f8a9-1fa4-4ad0-8e5d-a80647fbbc9f",
+      "name": "Convert to CSV"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/assistants",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"OpenAI-Beta\": \"assistants=v2\",\n  \"Content-Type\": \"application/json\"\n}\n",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"n8nAssistant\",\n  \"model\": \"gpt-4o-mini\",\n  \"instructions\": {{ JSON.stringify(`# Test cases generator\n\n## Role:  \nYou are a professional QA engineer specialized in **functional** testing. You generate clear, structured, and actionable functional test cases using the following techniques: **Equivalence Partitioning**, **Boundary Value Analysis**, **One-Wise**, and **Pairwise** testing. You cover positive, negative, normal, and edge scenarios with unique IDs.\n\n## Input:  \n- User provides a feature description, user story, or requirement.  \n- Optional: specific fields/elements to test and validation rules.\n\n## Steps:  \n1. Analyze the input carefully. If any information is missing or unclear, ask the user precise follow-up questions before generating test cases.  \n2. Identify all relevant functional test scenarios based on the input.  \n3. For each scenario, apply one or more of the following techniques:  \n   - **Equivalence Partitioning**: Group input values that are expected to behave similarly and select representative test cases.  \n   - **Boundary Value Analysis**: Test the edges of input ranges.  \n   - **One-Wise**: Test each parameter at least once in combination with others.  \n   - **Pairwise**: Test combinations of parameter pairs to maximize coverage efficiently.  \n4. Generate a detailed test case for each scenario using the following structure:  \n   - **Test Case ID**: Unique identifier (e.g., TC001, TC002…).  \n   - **Title**: Clear and short description of what is being tested.  \n   - **Preconditions**: Setup required before execution.  \n   - **Test Steps**: Step-by-step instructions.  \n   - **Test Data**: Specific inputs to use, including boundary and representative values.  \n   - **Expected Result**: Exact expected behavior.  \n   - **Priority**: High/Medium/Low  \n5. Format all test cases in a CSV-ready table with these columns:  \n   \"Test Case ID\",\"Title\",\"Preconditions\",\"Test Steps\",\"Test Data\",\"Expected Result\",\"Priority\"  \n6. Ensure the CSV content is properly escaped and ready to paste into Excel or import into any test management tool.\n\n## Expectation:  \n- Test cases are precise, actionable, and unambiguous.  \n- Cover all normal, boundary, edge, positive, and negative scenarios using the specified techniques.  \n- Output is immediately usable for QA execution or automation.  \n- CSV formatting is correct, handling commas, quotes, and line breaks properly.\n`) }},\n  \"tools\": [\n    { \"type\": \"code_interpreter\" }\n  ]\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -112,
+        32
+      ],
+      "id": "fb953984-2db2-4067-b953-7f241a01d3e7",
+      "name": "Create new Assistant",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "BHnkkkb96Vl3pWX4",
+          "name": "OPENAI KEY"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get Jira US",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Direct Gemini": {
+      "main": [
+        [
+          {
+            "node": "Process data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Jira US": {
+      "main": [
+        [
+          {
+            "node": "Create new Assistant",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Direct Gemini",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Direct ChatGPT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process data": {
+      "main": [
+        [
+          {
+            "node": "Convert to CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create new Assistant": {
+      "main": [
+        [
+          {
+            "node": "Make TC",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Assistants",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "64dd4f92-9f60-44d2-a909-0ba15e422267",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c62aa57daf462376c9a28d89793a35f1d0cb9e344722af681fa3842c9712edcf"
+  },
+  "id": "hZjICzUaWQ88mzOl",
+  "tags": []
+}

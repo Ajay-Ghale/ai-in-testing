@@ -1,0 +1,11 @@
+1. Mở terminal trong thư mục chứa docker-compose.yml
+
+2. Để start n8n:
+docker compose up -d
+
+3. Để truy cập n8n:
+http://localhost:5678
+lần đầu cần cung cấp thông tin admin. hãy điền để tiếp tục.
+
+4. Để dừng n8n:
+docker compose down

@@ -1,0 +1,227 @@
+{
+  "name": "Make-TR",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -752,
+        -160
+      ],
+      "id": "cf18dc5e-7a17-4926-8044-09790b6f5995",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.0-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.0-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a professional test manager. You are skilled at analyzing executed test cases and summarizing them into clear, structured JSON test reports. Your reports are suitable for stakeholders and include summaries, insights, evaluation, problems, and suggestions.\nGenerate JSON test report from below list of test cases and bugs:\n{{ $json.testCasesText }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        112,
+        -96
+      ],
+      "id": "a1f87c5f-58f4-4856-b30a-337729e1e0aa",
+      "name": "Direct Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "MOnElTPdAIVbdjjO",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": true,
+        "options": {
+          "jql": "project = TEST AND type IN (\"Test Case\", Bug) ORDER BY created DESC"
+        }
+      },
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -160
+      ],
+      "id": "f7486533-1cd2-46fe-913c-e5afae6f3aac",
+      "name": "Get Jira test cases and bugs",
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "DGk25HCMoNq8yxja",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = JSON.stringify(items, null, 2);\n\nreturn [{ json: { testCasesText: text } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -112,
+        -96
+      ],
+      "id": "7107824a-840c-40b3-8ff8-59bb1803c55e",
+      "name": "Make handle"
+    },
+    {
+      "parameters": {
+        "jsCode": "// items come from Jira JQL node\n// Each item is like { json: { key, fields: { summary, description, issuetype, ... } } }\n\n// Define which fields you want to keep\nconst fieldsToKeep = [\n  \"key\",\n  \"summary\",\n  \"description\",\n  \"issuetype\",\n  \"status\",\n  \"assignee\",\n  \"reporter\",\n  \"created\",\n  \"updated\",\n];\n\nreturn items.map(item => {\n  const issue = item.json;\n\n  // Flatten nested fields\n  return {\n    json: {\n      key: issue.key,\n      summary: issue.fields.summary,\n      description: issue.fields.description,\n      issuetype: issue.fields.issuetype?.name || \"\",\n      status: issue.fields.status?.name || \"\",\n      assignee: issue.fields.assignee?.displayName || \"\",\n      reporter: issue.fields.reporter?.displayName || \"\",\n      created: issue.fields.created,\n      updated: issue.fields.updated\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        -160
+      ],
+      "id": "5e108ade-7438-4fc9-9517-568e0dec16ab",
+      "name": "Convert to json"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = items[0].json.candidates[0].content.parts[0].text;\nreturn [\n  {\n    json: {\n      text: JSON.parse(raw)\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "13582779-64f1-4a80-93c4-df3cfe93fe0d",
+      "name": "Extract TR"
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "binaryPropertyName": "={{ $json.text }}",
+        "options": {
+          "fileName": "=report-{{ $now.toISO().replace(/[:]/g, \"-\") }}.json"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        -96
+      ],
+      "id": "f3ba815b-fc71-41c2-84b8-a879cf9ae03c",
+      "name": "Make JSON"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -112,
+        -304
+      ],
+      "id": "1f819c94-3ed2-4de9-b07e-8aeebb232647",
+      "name": "Make CSV"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get Jira test cases and bugs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Jira test cases and bugs": {
+      "main": [
+        [
+          {
+            "node": "Convert to json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Direct Gemini": {
+      "main": [
+        [
+          {
+            "node": "Extract TR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make handle": {
+      "main": [
+        [
+          {
+            "node": "Direct Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to json": {
+      "main": [
+        [
+          {
+            "node": "Make CSV",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Make handle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract TR": {
+      "main": [
+        [
+          {
+            "node": "Make JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3a999fd9-775d-4ee7-9b9f-4b40672a25ab",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c62aa57daf462376c9a28d89793a35f1d0cb9e344722af681fa3842c9712edcf"
+  },
+  "id": "OXfE7je87ToFcVRg",
+  "tags": []
+}

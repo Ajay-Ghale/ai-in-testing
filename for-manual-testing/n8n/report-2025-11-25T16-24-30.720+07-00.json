@@ -1,0 +1,90 @@
+[
+    {
+        "text": [
+            {
+                "summary": "Test Execution Report",
+                "insights": {
+                    "total_test_cases": 8,
+                    "passed": 3,
+                    "failed": 1,
+                    "in_progress": 2,
+                    "to_do": 1,
+                    "verifying": 2,
+                    "bugs_found": 1
+                },
+                "evaluation": "The test execution shows a mixed result. While a significant portion of test cases passed, there are failures and ongoing issues that need attention.",
+                "problems": [
+                    {
+                        "key": "TEST-6",
+                        "description": "Test case failed.",
+                        "status": "Failed",
+                        "details": "Further investigation is needed to determine the root cause of the failure."
+                    },
+                    {
+                        "key": "TEST-8",
+                        "description": "Bug of test case 3",
+                        "status": "In Progress",
+                        "details": "The bug is currently under investigation."
+                    },
+                    {
+                        "key": "TEST-3",
+                        "description": "Test case in progress.",
+                        "status": "In Progress",
+                        "details": "The test case is currently being worked on."
+                    },
+                    {
+                        "key": "TEST-5",
+                        "description": "Test case to do.",
+                        "status": "To Do",
+                        "details": "The test case is not started yet."
+                    },
+                    {
+                        "key": "TEST-9",
+                        "description": "Test case in verifying.",
+                        "status": "Verifying",
+                        "details": "The test case is currently being verified."
+                    },
+                    {
+                        "key": "TEST-4",
+                        "description": "Test case in verifying.",
+                        "status": "Verifying",
+                        "details": "The test case is currently being verified."
+                    }
+                ],
+                "suggestions": [
+                    "Prioritize the failed test case (TEST-6) and bug (TEST-8) for immediate investigation and resolution.",
+                    "Monitor the progress of test cases in 'In Progress' and 'Verifying' status.",
+                    "Ensure the 'To Do' test cases are assigned and executed in a timely manner.",
+                    "Review the test environment and data to prevent similar issues in the future.",
+                    "Conduct a root cause analysis for the failed test case to prevent recurrence."
+                ],
+                "test_case_details": [
+                    {
+                        "key": "TEST-11",
+                        "summary": "Test case 11",
+                        "status": "Passed",
+                        "assignee": "Thieu Huy"
+                    },
+                    {
+                        "key": "TEST-10",
+                        "summary": "Test case 10",
+                        "status": "Passed",
+                        "assignee": "Thieu Huy"
+                    },
+                    {
+                        "key": "TEST-7",
+                        "summary": "Test case 7",
+                        "status": "Passed",
+                        "assignee": ""
+                    },
+                    {
+                        "key": "TEST-6",
+                        "summary": "Test case 6",
+                        "status": "Failed",
+                        "assignee": "Thieu Huy"
+                    }
+                ]
+            }
+        ]
+    }
+]

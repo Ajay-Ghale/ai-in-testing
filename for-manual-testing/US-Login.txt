@@ -1,0 +1,38 @@
+Feature: User Login
+
+  As a registered user
+  I want to log in using my email and password
+  So that I can access my personal dashboard
+
+  Background:
+    Given the login screen is displayed
+
+  Scenario Outline: Login attempts
+    When the user enters email "<email>"
+    And the user enters password "<password>"
+    And the user clicks the "Sign In" button
+    Then the user should see "<expected_message>"
+
+Examples:
+  | email               | password      | expected_message                          |
+  | valid@example.com   | validPass!@# | Dashboard is displayed                     |
+  | invalid@example.com | validPass!@# | Invalid username or password               |
+  | valid@example.com   | wrongPass123 | Invalid username or password               |
+  | invalid-email       | anyPassword  | Please enter a valid email address         |
+  | ""                  | validPass!@# | Email is required                          |
+  | valid@example.com   | ""           | Password is required                       |
+
+  Scenario: Show "Forgot password?" link after 3 failed attempts
+    Given the user has failed login 3 times
+    When the user tries to login again
+    Then the user should see the linked text "Forgot password? Reset it here."
+
+  Scenario: Block login after 5 failed attempts
+    Given the user has failed login 5 times
+    When the user tries to login again
+    Then the user should see the message "Too many attempts. Please try again later."
+    And the login button should be disabled
+
+  Scenario: Navigate to signup page
+    When the user clicks the linked text "Not have an account? Signup here."
+    Then the user should be redirected to the signup/registration page
