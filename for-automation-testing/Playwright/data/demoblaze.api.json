@@ -1,0 +1,28 @@
+[
+    {
+        "url": "https://api.demoblaze.com/signup",
+        "method": "POST",
+        "headers": {
+            "content-type": "application/json"
+        },
+        "body": {
+            "username": "user_ipmac_1",            
+            "password": "YWJjMTIz"
+        }
+    },
+    {
+        "url": "https://api.demoblaze.com/login",
+        "method": "POST",
+        "headers": {
+            "content-type": "application/json"
+        },
+        "body": {
+            "username": "user_ipmac_1",            
+            "password": "YWJjMTIz"
+        }
+    },
+    {
+        "url": "https://api.demoblaze.com/entries",
+        "method": "GET"
+    }
+]

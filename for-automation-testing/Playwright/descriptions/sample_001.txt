@@ -1,0 +1,3 @@
+Visit https://www.saucedemo.com/ 
+using standard_user credential from file sauce.credentials.json to login
+retrieve all item names and prices

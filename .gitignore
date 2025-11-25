@@ -8,5 +8,4 @@ npm-debug.log*
 yarn-error.log*
 
 n8n_data/
-for-automation-testing/
-
+test-results/
